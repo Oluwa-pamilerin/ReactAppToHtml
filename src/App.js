@@ -11,6 +11,7 @@ const App = () => {
   const [fontSize, setFontSize] = useState(100);
   const [theme, setTheme] = useState('light');
   const [backgroundColor, setBackgroundColor] = useState('#ffffff');
+  const [textColor, setTextColor] = useState('#000000');
   const viewerRef = useRef(null);
 
   useEffect(() => {
@@ -49,7 +50,8 @@ const App = () => {
               'padding': '20px',
               'font-size': `${fontSize}%`,
               'line-height': '1.6',
-              'background-color': backgroundColor
+              'background-color': backgroundColor,
+              'color': textColor
             }
           });
 
@@ -125,7 +127,7 @@ const App = () => {
         book.destroy();
       }
     };
-  }, [file, fontSize, theme, backgroundColor]);
+  }, [file, fontSize, theme, backgroundColor, textColor]);
 
   const handleFileUpload = (event) => {
     const uploadedFile = event.target.files[0];
@@ -159,8 +161,38 @@ const App = () => {
     }
   };
 
+  const handleTextColorChange = (event) => {
+    const newColor = event.target.value;
+    setTextColor(newColor);
+    if (rendition) {
+      rendition.themes.default({
+        body: {
+          'padding': '20px',
+          'font-size': `${fontSize}%`,
+          'line-height': '1.6',
+          'background-color': backgroundColor,
+          'color': newColor
+        }
+      });
+    }
+  };
+
   const handleFontSizeChange = (delta) => {
-    setFontSize(prev => Math.max(50, Math.min(200, prev + delta)));
+    setFontSize(prev => {
+      const newSize = Math.max(50, Math.min(200, prev + delta));
+      if (rendition) {
+        rendition.themes.default({
+          body: {
+            'padding': '20px',
+            'font-size': `${newSize}%`,
+            'line-height': '1.6',
+            'background-color': backgroundColor,
+            'color': textColor
+          }
+        });
+      }
+      return newSize;
+    });
   };
 
   const handleThemeChange = () => {
@@ -176,7 +208,8 @@ const App = () => {
           'padding': '20px',
           'font-size': `${fontSize}%`,
           'line-height': '1.6',
-          'background-color': newColor
+          'background-color': newColor,
+          'color': textColor
         }
       });
     }
@@ -217,18 +250,6 @@ const App = () => {
               Next
             </button>
             <button 
-              onClick={() => handleFontSizeChange(-10)}
-              style={{ marginRight: "10px", padding: "8px 16px", cursor: "pointer" }}
-            >
-              Smaller Text
-            </button>
-            <button 
-              onClick={() => handleFontSizeChange(10)}
-              style={{ marginRight: "10px", padding: "8px 16px", cursor: "pointer" }}
-            >
-              Larger Text
-            </button>
-            <button 
               onClick={handleThemeChange}
               style={{ padding: "8px 16px", cursor: "pointer" }}
             >
@@ -241,6 +262,26 @@ const App = () => {
                 value={backgroundColor}
                 onChange={handleBackgroundColorChange}
                 style={{ width: "50px", height: "30px", cursor: "pointer" }}
+              />
+            </div>
+            <div style={{ marginTop: "10px", display: "flex", alignItems: "center" }}>
+              <label style={{ marginRight: "10px" }}>Text Color:</label>
+              <input
+                type="color"
+                value={textColor}
+                onChange={handleTextColorChange}
+                style={{ width: "50px", height: "30px", cursor: "pointer" }}
+              />
+            </div>
+            <div style={{ marginTop: "10px", display: "flex", alignItems: "center" }}>
+              <label style={{ marginRight: "10px" }}>Font Size: {fontSize}%</label>
+              <input
+                type="range"
+                min="50"
+                max="200"
+                value={fontSize}
+                onChange={(e) => handleFontSizeChange(parseInt(e.target.value) - fontSize)}
+                style={{ width: "150px", cursor: "pointer" }}
               />
             </div>
           </div>
