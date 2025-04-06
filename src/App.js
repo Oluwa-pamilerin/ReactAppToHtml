@@ -10,6 +10,7 @@ const App = () => {
   const [totalLocations, setTotalLocations] = useState(0);
   const [fontSize, setFontSize] = useState(100);
   const [theme, setTheme] = useState('light');
+  const [backgroundColor, setBackgroundColor] = useState('#ffffff');
   const viewerRef = useRef(null);
 
   useEffect(() => {
@@ -47,7 +48,8 @@ const App = () => {
             body: {
               'padding': '20px',
               'font-size': `${fontSize}%`,
-              'line-height': '1.6'
+              'line-height': '1.6',
+              'background-color': backgroundColor
             }
           });
 
@@ -123,7 +125,7 @@ const App = () => {
         book.destroy();
       }
     };
-  }, [file, fontSize, theme]);
+  }, [file, fontSize, theme, backgroundColor]);
 
   const handleFileUpload = (event) => {
     const uploadedFile = event.target.files[0];
@@ -163,6 +165,21 @@ const App = () => {
 
   const handleThemeChange = () => {
     setTheme(prev => prev === 'light' ? 'dark' : 'light');
+  };
+
+  const handleBackgroundColorChange = (event) => {
+    const newColor = event.target.value;
+    setBackgroundColor(newColor);
+    if (rendition) {
+      rendition.themes.default({
+        body: {
+          'padding': '20px',
+          'font-size': `${fontSize}%`,
+          'line-height': '1.6',
+          'background-color': newColor
+        }
+      });
+    }
   };
 
   return (
@@ -217,6 +234,15 @@ const App = () => {
             >
               Toggle Theme
             </button>
+            <div style={{ marginTop: "10px", display: "flex", alignItems: "center" }}>
+              <label style={{ marginRight: "10px" }}>Background Color:</label>
+              <input
+                type="color"
+                value={backgroundColor}
+                onChange={handleBackgroundColorChange}
+                style={{ width: "50px", height: "30px", cursor: "pointer" }}
+              />
+            </div>
           </div>
         </div>
       )}
