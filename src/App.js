@@ -251,4 +251,4 @@ const App = () => {
   );
 }
 
-export default BasicExample;
+export default App;
